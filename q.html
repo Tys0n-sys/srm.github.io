@@ -1,0 +1,394 @@
+Skip to content
+DEV Community
+Search...
+
+Log in
+Create account
+
+3
+Jump to Comments
+18
+Save
+
+Cover image for How To Create a Screen Sharing Application With JavaScript
+Anthony Smith
+Anthony Smith
+Posted on 8 Aug 2022 • Updated on 21 Aug 2022
+
+
+8
+
+2
+How To Create a Screen Sharing Application With JavaScript
+#
+javascript
+#
+html
+#
+css
+#
+webdev
+Have you ever wondered how hard or easy it would be to create your own screen-sharing application?
+
+In this article, we will show you how to create a screen-sharing application with JavaScript via the Screen Capture API
+and its getDisplayMedia() technique. This will allow us to capture half or all of a screen and share it with other
+users throughout a WebRTC conference session.
+
+Initial Steps:
+Create a new project in your favorite IDE.
+Setup HTML boilerplate code
+Add JavaScript code
+Deploy Live server
+Create a new project in your favorite IDE
+
+I'm going to be using VScode for this tutorial. Feel free to use the editor of your choice. Let's go ahead and set up
+our html code.
+
+HTML:
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Screen Sharing</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div style="width:80%;background: grey;margin: auto;">
+        <video id="video" autoplay playsinline muted></video>
+    </div>
+    <div style="width:80%;margin: auto;padding-top:10px ;">
+        <button class="btn btn-primary" id="start"> Start Screen Sharing</button>
+        <button class="btn btn-secondary" id="stop"> Stop</button>
+    </div>
+</body>
+
+</html>
+Start your live-server and open the index.html file in your browser. You should see a page that looks like this:
+
+Image description
+
+JavaScript:
+Next, we need to add some JavaScript code to our index.html file. Go ahead and add your script tags to the body section
+of your index.html file and add the following code:
+const videoElem = document.getElementById("video");
+      const startElem = document.getElementById("start");
+      const stopElem = document.getElementById("stop");
+      // Options for getDisplayMedia()
+      var displayMediaOptions = {
+          video: {
+              cursor: "always",
+              height: 1000,
+              width: 1200
+          },
+          audio: false
+      };
+      // Set event listeners for the start and stop buttons
+      startElem.addEventListener("click", function (evt) {
+          startCapture();
+      }, false);
+      // Stop the screen capture
+      stopElem.addEventListener("click", function (evt) {
+          stopCapture();
+      }, false);
+      // Start the screen capture
+      async function startCapture() {
+          try {
+              videoElem.srcObject = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+              dumpOptionsInfo();
+          } catch (err) {
+              // Handle error
+              console.error("Error: " + err);
+          }
+      }
+      // Stop the stream
+      function stopCapture(evt) {
+          let tracks = videoElem.srcObject.getTracks();
+          tracks.forEach(track => track.stop());
+          videoElem.srcObject = null;
+      }
+      // Dump the available media track capabilities to the console
+      function dumpOptionsInfo() {
+          const videoTrack = videoElem.srcObject.getVideoTracks()[0];
+          console.info("Track settings:");
+          console.info(JSON.stringify(videoTrack.getSettings(), null, 2));
+          console.info("Track constraints:");
+          console.info(JSON.stringify(videoTrack.getConstraints(), null, 2));
+}
+Test the Application
+Now we can go ahead and test our application. Open the index.html file in your browser and click on the start button to
+initialize the screen capture.
+
+Image description
+
+Click on a screen and you should see the video stream of the screen you clicked on. You can also click on the stop
+button to stop the screen capture.
+
+Image description
+
+Full Code:
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Screen Sharing</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div style="width:80%;background: grey;margin: auto;">
+        <video id="video" autoplay playsinline muted></video>
+    </div>
+    <div style="width:80%;margin: auto;padding-top:10px ;">
+        <button class="btn btn-primary" id="start"> Start Screen Sharing</button>
+        <button class="btn btn-secondary" id="stop"> Stop</button>
+    </div>
+    <script type="text/javascript">
+        const videoElem = document.getElementById("video");
+        const startElem = document.getElementById("start");
+        const stopElem = document.getElementById("stop");
+        // Options for getDisplayMedia()
+        var displayMediaOptions = {
+            video: {
+                cursor: "always",
+                height: 1000,
+                width: 1200
+            },
+            audio: false
+        };
+        // Set event listeners for the start and stop buttons
+        startElem.addEventListener("click", function (evt) {
+            startCapture();
+        }, false);
+        stopElem.addEventListener("click", function (evt) {
+            stopCapture();
+        }, false);
+        async function startCapture() {
+            try {
+                videoElem.srcObject = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+                dumpOptionsInfo();
+            } catch (err) {
+                console.error("Error: " + err);
+            }
+        }
+
+        function stopCapture(evt) {
+            let tracks = videoElem.srcObject.getTracks();
+            tracks.forEach(track => track.stop());
+            videoElem.srcObject = null;
+        }
+
+        function dumpOptionsInfo() {
+            const videoTrack = videoElem.srcObject.getVideoTracks()[0];
+            console.info("Track settings:");
+            console.info(JSON.stringify(videoTrack.getSettings(), null, 2));
+            console.info("Track constraints:");
+            console.info(JSON.stringify(videoTrack.getConstraints(), null, 2));
+        }
+    </script>
+</body>
+</html>
+🤝 Thank you so much for taking time out of your day to read this Article! I hope it helped you out and you learned something new today! Please leave a comment if you have anything you'd like to add.
+
+☕️ If you enjoy reading my content Buy me a coffee as it will help me continue to make awesome quality blogs!
+
+👨🏽‍💻 For more Web Dev code snippets, tips, and tricks check out my Grepper Platform
+
+🎨 You can also check out my Portfolio here
+
+🐦 You can also follow me on Twitter to check out my self-taught journey as well as more bite-sized tips on web development.
+
+Top comments (3)
+
+Subscribe
+pic
+Add to the discussion
+ 
+ 
+fnaquira profile image
+Favio Náquira
+•
+10 Aug 22
+
+Where is the WebRTC part? Is it going to be a second part?
+
+
+3
+ likes
+Like
+Reply
+ 
+ 
+anthonys1760 profile image
+Anthony Smith 
+•
+11 Aug 22
+
+Yes, WebRTC is coming soon and will be a second part for sure.
+
+
+2
+ likes
+Like
+Reply
+ 
+ 
+omwalunj profile image
+Om DIlip Walunj
+•
+14 Oct 22
+
+where should i can get the second part of this project?
+
+
+1
+ like
+Like
+Reply
+Code of Conduct • Report abuse
+DEV Community
+
+Trending in CSS
+The CSS community is exploring new tricks, discussing the evolution of CSS, and its power to create complex animations and designs. Interest is also growing in the new CSS View Transitions feature.
+
+smitterhane 
+13 CSS Tricks that will give you an adrenaline rush🤯
+Smitter ・ Jul 17
+#css #beginners #webdev #productivity
+Builder.io 
+CSS: The Good Parts
+Yoav Ganbar for Builder.io ・ Jul 17
+#webdev #css #frontend
+madsstoumann 
+The Moon in 10241 Dots — Re-creating a 1969 Masterpiece
+Mads Stoumann ・ Jul 18
+#css #javascript #webdev #showdev
+starbist 
+Transition between pages smoothly with a single line of code
+Silvestar Bistrović ・ Jul 12
+#webdev #html #css
+themodernweb 
+🔥🤯 Amazing Food Order hero section using HTML, CSS and JS.
+Modern Web ・ Jul 11
+#html #css #javascript #webdev
+Read next
+balastrong profile image
+One Year of Dev YouTube
+Leonardo Montini - Jul 30
+
+mangelosanto profile image
+Using react-intersection-observer to create a dynamic header
+Matt Angelosanto - Aug 2
+
+oyohalexandra profile image
+Empower Your WordPress Journey: 7 Compelling Reasons To Host It on Your Own!
+Alexandra Oyoh Alison - Aug 2
+
+lakshmananarumugam profile image
+15 Advanced TypeScript Tips for Development
+Lakshmanan Arumugam - Jul 14
+
+
+Anthony Smith
+Follow
+Hi Everyone 👋🏽 I'm a full-stack developer from the United States. I love writing Technical Articles about JavaScript, HTML, CSS, and Cybersecurity. Environment: Linux (Ubuntu), Mac OS & Windows
+LOCATION
+Caledonia, Michigan
+WORK
+Full Stack Software Engineer at a Cyber Security Firm
+JOINED
+28 Nov 2021
+More from Anthony Smith
+Object Destructuring in JavaScript
+#javascript #webdev #programming #tutorial
+How to Insert Form Data into a Database Using HTML & PHP
+#html #php #mysql #database
+How to Create a Todo List App
+#html #css #javascript #webdev
+DEV Community
+
+🌚 Life is too short to browse without dark mode
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Screen Sharing</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div style="width:80%;background: grey;margin: auto;">
+        <video id="video" autoplay playsinline muted></video>
+    </div>
+    <div style="width:80%;margin: auto;padding-top:10px ;">
+        <button class="btn btn-primary" id="start"> Start Screen Sharing</button>
+        <button class="btn btn-secondary" id="stop"> Stop</button>
+    </div>
+    <script type="text/javascript">
+        const videoElem = document.getElementById("video");
+        const startElem = document.getElementById("start");
+        const stopElem = document.getElementById("stop");
+        // Options for getDisplayMedia()
+        var displayMediaOptions = {
+            video: {
+                cursor: "always",
+                height: 1000,
+                width: 1200
+            },
+            audio: false
+        };
+        // Set event listeners for the start and stop buttons
+        startElem.addEventListener("click", function (evt) {
+            startCapture();
+        }, false);
+        stopElem.addEventListener("click", function (evt) {
+            stopCapture();
+        }, false);
+        async function startCapture() {
+            try {
+                videoElem.srcObject = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+                dumpOptionsInfo();
+            } catch (err) {
+                console.error("Error: " + err);
+            }
+        }
+
+        function stopCapture(evt) {
+            let tracks = videoElem.srcObject.getTracks();
+            tracks.forEach(track => track.stop());
+            videoElem.srcObject = null;
+        }
+
+        function dumpOptionsInfo() {
+            const videoTrack = videoElem.srcObject.getVideoTracks()[0];
+            console.info("Track settings:");
+            console.info(JSON.stringify(videoTrack.getSettings(), null, 2));
+            console.info("Track constraints:");
+            console.info(JSON.stringify(videoTrack.getConstraints(), null, 2));
+        }
+    </script>
+</body>
+</html>
+DEV Community — A constructive and inclusive social network for software developers. With you every step of your journey.
+
+Home
+Listings
+Podcasts
+Videos
+Tags
+FAQ
+Forem Shop
+Advertise on DEV
+About
+Contact
+Guides
+Software comparisons
+Code of Conduct
+Privacy Policy
+Terms of use
+Built on Forem — the open source software that powers DEV and other inclusive communities.
+
+Made with love and Ruby on Rails. DEV Community © 2016 - 2023.
